@@ -1,32 +1,103 @@
-# قالب وب‌سایت MOVTIGROUP
+# Vibe — Social Network (TikTok/Instagram-style)
 
-این مخزن شامل قالب اصلی وب‌سایت شرکت **MOVTIGROUP** است. هدف از ارائه این مخزن، نمایش و مستندسازی طراحی ظاهری و ساختار صفحات جهت ارائه‌ی هویت بصری شرکت می‌باشد. لازم به ذکر است که کدهای عملکردی و منطق پشت وب‌سایت به صورت خصوصی در مخزن مجزا نگهداری می‌شوند.
+A full-stack social network where users can post photos and videos, follow each other, like and comment. Built with **Nuxt 3** (frontend), **NestJS** (backend), **PostgreSQL + Prisma** (database).
 
-**لینک گیت هاب:** [https://github.com/movtigroup/movtigroup/](https://github.com/movtigroup/movtigroup/)
+## Tech stack
 
-## معرفی
+| Layer    | Tech                                              |
+| -------- | ------------------------------------------------- |
+| Frontend | Nuxt 3 (Vue 3), Tailwind CSS                       |
+| Backend  | NestJS, Passport JWT, Multer (uploads)            |
+| Database | PostgreSQL + Prisma ORM                            |
+| Media    | Local disk storage (served at `/uploads`)         |
 
-این قالب به عنوان الگوی اصلی طراحی سایت شرکت MOVTIGROUP ارائه شده است. در اینجا تمرکز بر ایجاد یک تجربه کاربری مدرن، ساده و واکنش‌گرا قرار دارد. تمامی اجزا و ساختارهای بصری نمایانگر هویت برند، در‌باشند.
+## Features
 
-## ویژگی‌های قالب
+- Email/username + password auth (JWT)
+- Upload photos **and** videos with caption
+- Explore feed (all posts) + Following feed
+- Like / unlike, comment, delete own posts/comments
+- User profiles with grid of posts, follower/following counts
+- Follow / unfollow
+- Cursor-based pagination
+- Responsive design for mobile and desktop
 
-- **طراحی ریسپانسیو:** سازگار با تمامی دستگاه‌ها از جمله موبایل، تبلت و دسکتاپ.
-- **سفارشی‌سازی آسان:** امکان تغییر و تطبیق المان‌های طراحی مطابق با هویت بصری شرکت.
-- **سادگی و مستندسازی:** ساختار تمیز و مستند برای مرور و استفاده سریع.
-- **سهولت نگهداری:** به‌روزرسانی‌های منظم و ساختار سازمان‌یافته جهت حفظ انسجام طراحی.
+## Project structure
 
-## نکات مهم
+```
+vibe/
+├── backend/      # NestJS API + Prisma
+├── frontend/     # Nuxt 3 app
+├── docker-compose.yml  # Postgres for local dev
+├── README.md     # This file (English)
+├── README.fa.md  # Persian documentation
+├── AGENTS.md     # Agent development guide
+├── CONTRIBUTING.md # Contribution guidelines
+├── DESIGN.md     # Design system documentation
+└── PASS.md       # Password and security notes
+```
 
-- این مخزن صرفاً جهت نمایش قالب و اجزای ظاهری وب‌سایت می‌باشد.
-- کدهای مربوط به منطق عملکردی و مدیریت ترافیک، در مخزن خصوصی جداگانه نگهداری می‌شوند.
-- تغییرات، بهبودها و به‌روزرسانی‌های طراحی از طریق این مخزن منتشر خواهند شد.
+## Getting started
 
-## استفاده از قالب
+### 1. Start PostgreSQL
 
-برای بررسی اجزای طراحی و ساختار صفحات، می‌توانید فایل‌های موجود در این مخزن را مرور نمایید. در صورت داشتن نظرات یا پیشنهادات جهت بهبود قالب، از طریق بخش **Issues** یا ارتباط مستقیم با تیم ما مشارکت فرمایید.
+```bash
+docker compose up -d
+```
 
-## ارتباط با ما
+### 2. Backend
 
-- **ایمیل:** [info@movtigroup.ir](mailto:info@movtigroup.ir)
-- **وب‌سایت:** [movtigroup.ir](https://movtigroup.ir)
-- **گیت هاب:** [https://github.com/movtigroup/movtigroup/](https://github.com/movtigroup/movtigroup/)
+```bash
+cd backend
+cp .env.example .env          # adjust if needed
+npm install
+npx prisma migrate dev        # create tables
+npm run prisma:seed           # optional: demo users + posts
+npm run start:dev             # http://localhost:3001/api
+```
+
+Demo logins after seeding: `alice` / `bob`, password `password123`.
+
+### 3. Frontend
+
+```bash
+cd frontend
+cp .env.example .env          # NUXT_PUBLIC_API_BASE=http://localhost:3001/api
+npm install
+npm run dev                   # http://localhost:3000
+```
+
+## API overview
+
+| Method | Endpoint                       | Auth | Description                |
+| ------ | ------------------------------ | ---- | -------------------------- |
+| POST   | `/api/auth/register`           | —    | Create account             |
+| POST   | `/api/auth/login`              | —    | Login                      |
+| GET    | `/api/auth/me`                 | ✓    | Current user               |
+| GET    | `/api/posts`                   | opt  | Explore feed               |
+| GET    | `/api/posts/following`         | ✓    | Following feed             |
+| POST   | `/api/posts`                   | ✓    | Create post                |
+| GET    | `/api/posts/:id`               | opt  | Single post                |
+| DELETE | `/api/posts/:id`               | ✓    | Delete own post            |
+| POST   | `/api/posts/:id/like`          | ✓    | Like                       |
+| DELETE | `/api/posts/:id/like`          | ✓    | Unlike                     |
+| GET    | `/api/posts/:id/comments`      | —    | List comments              |
+| POST   | `/api/posts/:id/comments`      | ✓    | Add comment                |
+| DELETE | `/api/comments/:id`            | ✓    | Delete comment             |
+| POST   | `/api/media/upload`            | ✓    | Upload image/video         |
+| GET    | `/api/users/:username`         | opt  | Profile                    |
+| GET    | `/api/users/:username/posts`   | opt  | User's posts               |
+| POST   | `/api/users/:username/follow`  | ✓    | Follow                     |
+| DELETE | `/api/users/:username/follow`  | ✓    | Unfollow                   |
+| GET    | `/api/users/search?q=`         | —    | Search users               |
+
+## Notes
+
+- Media files are stored on local disk under `backend/uploads`. For production, switch to S3/MinIO and store only the URL.
+- Set a strong `JWT_SECRET` and configure `CORS_ORIGIN` before deploying.
+- See [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines.
+- See [DESIGN.md](DESIGN.md) for design system documentation.
+
+## License
+
+This project is licensed under the MIT License.

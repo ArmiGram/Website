@@ -1,1 +1,28 @@
+# Changelog
 
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+### Added
+- Initial project setup with NestJS backend and Nuxt 3 frontend
+- JWT authentication system
+- User registration and login endpoints
+- Post creation with media upload support
+- Follow/unfollow functionality
+- Like/unlike posts
+- Comment system
+- Cursor-based pagination
+- User profile pages
+- Explore and following feeds
+
+## [1.0.0] - 2024-01-01
+
+### Added
+- Initial release
+- Basic social network features
+- Photo and video upload support
+- Responsive design with Tailwind CSS
